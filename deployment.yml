@@ -32,7 +32,7 @@ spec:
       initContainers:
       - image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
         name: jar
-        command: ["cp", "/app.jar", "/app"]
+        command: ["cp", "/app-1.0.0.jar", "/app"]
         volumeMounts:
         - mountPath: /app
           name: app-vol
