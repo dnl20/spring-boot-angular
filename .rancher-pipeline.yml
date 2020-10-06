@@ -1,0 +1,32 @@
+stages:
+- name: Build
+  steps:
+    - runScriptConfig:
+        image: registry.cn-hangzhou.aliyuncs.com/fullj/aliyun-maven:3-jdk-8
+        shellScript: |-
+          mvn --settings /settings.xml clean package
+# blow block has no effect
+#        volumeMounts:
+#          - mountPath: /opt/maven
+#            name: cfg-vol
+#        volumes:
+#          - name: cfg-vol
+#            configMap:
+#              name: maven-settings
+#              items:
+#                - key: settings.xml
+#                  path: ./settings.xml
+- name: Publish
+  steps:
+    - publishImageConfig:
+        dockerfilePath: ./Dockerfile
+        buildContext: .
+        tag: fullj/pipeline-example-spring:${CICD_EXECUTION_SEQUENCE}
+        pushRemote: true
+        registry: registry.cn-hangzhou.aliyuncs.com
+      env:
+        PLUGIN_MIRROR: https://d6izfrb6.mirror.aliyuncs.com
+- name: Deploy
+  steps:
+    - applyYamlConfig:
+        path: ./deployment.yml
